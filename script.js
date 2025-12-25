@@ -47,9 +47,9 @@ const finale = document.getElementById('step-finale');
 const bgWishContainer = document.getElementById('background-wish-container');
 
 const messages = [
-    "2025 had its ups and downs...",
-    "But some moments made it special.",
-    "Some people, too."
+    "2025 wasn’t perfect.",
+    "But it had moments worth remembering.",
+    "“And people worth smiling about."
 ];
 
 function startJourney() {

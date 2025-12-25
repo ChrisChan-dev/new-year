@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>A Message for You</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@200;400&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <div class="stars" id="stars"></div>
+    
+    <div id="background-wish-container"></div>
+
+    <canvas id="fireworksCanvas"></canvas>
+
+    <div id="music-control" onclick="toggleMusic()">♪</div>
+
+    <div id="main-container">
+        
+        <div id="step-intro">
+            <h1 class="fade-in">Before the year ends...</h1>
+            <p class="fade-in" style="animation-delay: 1.5s; opacity: 0;">There’s something I want to show you.</p>
+            <div style="animation-delay: 2.5s; opacity: 0;" class="fade-in">
+                <button class="btn-text" onclick="startJourney()">Continue &rarr;</button>
+            </div>
+        </div>
+
+        <div id="step-narrative" class="hidden">
+            <h1 id="narrative-text"></h1>
+        </div>
+
+        <div id="step-virgo" class="hidden">
+            <svg id="constellation-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div id="virgo-label">VIRGO</div>
+            
+            <div id="virgo-btn-container" class="hidden">
+                <button class="btn-text" onclick="finishVirgoStep()">Make a Wish &rarr;</button>
+            </div>
+        </div>
+
+        <div id="step-finale" class="hidden">
+            <h1 class="glow-text fade-in">🎆 Happy New Year 🎆</h1>
+            <p class="fade-in" style="animation-delay: 1s; opacity: 0;">
+                I’m grateful the year ended with you here.
+            </p>
+            <div class="small-subtext fade-in" style="animation-delay: 2.5s; opacity: 0;">
+                Here’s to new beginnings <span class="heartbeat">♥</span>
+            </div>
+
+            <div id="message-section" class="fade-in" style="animation-delay: 3s; opacity: 0;">
+                <textarea id="user-message" placeholder="Write a wish for 2026..."></textarea>
+                <br>
+                <div class="button-group">
+                    <button class="btn-text" onclick="saveMessage()">Send to the Stars</button>
+                </div>
+            </div>
+            
+            <p id="save-confirmation" class="hidden glow-text">✨ Wish sent to the universe ✨</p>
+        </div>
+
+    </div>
+
+    <footer>
+        Made with <span class="heartbeat">♥</span> by Channdev
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

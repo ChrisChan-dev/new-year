@@ -38,7 +38,7 @@ const aquariusBtnContainer = document.getElementById('aquarius-btn-container');
 const finale = document.getElementById('step-finale');
 const bgWishContainer = document.getElementById('background-wish-container');
 
-// Updated Messages
+// UPDATED Messages
 const messages = [
     "2025 wasn’t perfect.",
     "But it had moments worth remembering.",
@@ -56,33 +56,61 @@ function startJourney() {
     }, 1000);
 }
 
+// --- UPDATED LOGIC FOR GOLD GLOW ANIMATION ---
 function playNarrative(index) {
     if (index >= messages.length) {
         showAquarius();
         return;
     }
 
+    // 1. Set text
     narrativeText.textContent = messages[index];
-    narrativeText.style.opacity = '0';
-    narrativeText.className = 'fade-in';
+    
+    // 2. Set the Base Class (White + Gold Shadow, but opacity 0)
+    narrativeText.className = 'gold-glow-text';
 
+    // 3. Trigger Fade In
     setTimeout(() => {
-        narrativeText.className = 'fade-out';
+        narrativeText.classList.add('visible');
+    }, 50);
+
+    // 4. Wait for Read Time (4 seconds), then Fade Out
+    setTimeout(() => {
+        narrativeText.classList.remove('visible'); // Fade out
+
+        // 5. Wait for fade out transition (1.5s), then Next Message
         setTimeout(() => {
             playNarrative(index + 1);
-        }, 1000); 
-    }, 3500);
+        }, 1500); 
+
+    }, 4000); 
 }
 
 const aquariusPoints = [
-    {x: 85, y: 10}, {x: 65, y: 25}, {x: 45, y: 40}, {x: 30, y: 50}, 
-    {x: 15, y: 60}, {x: 60, y: 50}, {x: 75, y: 55}, {x: 25, y: 75}, 
-    {x: 40, y: 85}, {x: 60, y: 80}, {x: 80, y: 90}
+    {x: 85, y: 10}, 
+    {x: 65, y: 25}, 
+    {x: 45, y: 40}, 
+    {x: 30, y: 50}, 
+    {x: 15, y: 60}, 
+    {x: 60, y: 50}, 
+    {x: 75, y: 55}, 
+    {x: 25, y: 75}, 
+    {x: 40, y: 85}, 
+    {x: 60, y: 80}, 
+    {x: 80, y: 90}
 ];
 
 const aquariusConnections = [
-    [0, 1], [1, 2], [2, 3], [3, 4], [2, 5], [5, 6], 
-    [4, 7], [7, 8], [8, 9], [9, 10]
+    [0, 1], 
+    [1, 2], 
+    [2, 3], 
+    [3, 4], 
+    [2, 5], 
+    [5, 6], 
+    [4, 7], 
+    [7, 8], 
+    [8, 9], 
+    [9, 10]
 ];
 
 function showAquarius() {
@@ -95,12 +123,9 @@ function showAquarius() {
     aquariusPoints.forEach((point) => {
         const star = document.createElement('div');
         star.className = 'aquarius-star';
-        // Insert the star character
         star.innerHTML = '★'; 
         star.style.left = point.x + '%';
         star.style.top = point.y + '%';
-        // No longer setting width/height here, handled by font-size in CSS
-        
         starContainer.appendChild(star);
     });
 

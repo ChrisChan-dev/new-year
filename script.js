@@ -10,22 +10,15 @@ const firebaseConfig = {
     measurementId: "G-5W3J5VGDDY"
 };
 
-// Initialize Firebase
-// (Check if firebase is loaded first to prevent errors)
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 } else if (typeof firebase === 'undefined') {
-    console.error("Firebase SDK not loaded. Make sure you added the <script> tags in index.html");
+    console.error("Firebase SDK not loaded.");
 }
-
-// Initialize Database
 const db = firebase.database();
 
-
 // --- VISUAL & ANIMATION LOGIC ---
-
 const starContainer = document.getElementById('stars');
-// Create background stars
 for(let i=0; i<100; i++) {
     const star = document.createElement('div');
     star.className = 'star';
@@ -40,12 +33,12 @@ for(let i=0; i<100; i++) {
 const intro = document.getElementById('step-intro');
 const narrative = document.getElementById('step-narrative');
 const narrativeText = document.getElementById('narrative-text');
-const virgoStep = document.getElementById('step-virgo');
-const virgoLabel = document.getElementById('virgo-label');
-const virgoBtnContainer = document.getElementById('virgo-btn-container');
+const aquariusStep = document.getElementById('step-aquarius');
+const aquariusBtnContainer = document.getElementById('aquarius-btn-container');
 const finale = document.getElementById('step-finale');
 const bgWishContainer = document.getElementById('background-wish-container');
 
+// Updated Messages
 const messages = [
     "2025 wasn’t perfect.",
     "But it had moments worth remembering.",
@@ -65,7 +58,7 @@ function startJourney() {
 
 function playNarrative(index) {
     if (index >= messages.length) {
-        showVirgo();
+        showAquarius();
         return;
     }
 
@@ -81,58 +74,39 @@ function playNarrative(index) {
     }, 3500);
 }
 
-// Virgo "Maiden" Coordinates
-const virgoPoints = [
-    {x: 76, y: 5},   
-    {x: 78, y: 22},  
-    {x: 66, y: 35},  
-    {x: 15, y: 30},  
-    {x: 46, y: 38},  
-    {x: 44, y: 58},  
-    {x: 68, y: 53},  
-    {x: 27, y: 68},  
-    {x: 6, y: 85},   
-    {x: 85, y: 65},  
-    {x: 60, y: 83},  
-    {x: 38, y: 92}   
+const aquariusPoints = [
+    {x: 85, y: 10}, {x: 65, y: 25}, {x: 45, y: 40}, {x: 30, y: 50}, 
+    {x: 15, y: 60}, {x: 60, y: 50}, {x: 75, y: 55}, {x: 25, y: 75}, 
+    {x: 40, y: 85}, {x: 60, y: 80}, {x: 80, y: 90}
 ];
 
-const virgoConnections = [
-    [0, 1], [1, 2],         
-    [2, 4], [3, 4],         
-    [4, 5], [2, 6], [5, 6], 
-    [5, 7], [7, 8],         
-    [6, 9], [9, 10], [10, 11] 
+const aquariusConnections = [
+    [0, 1], [1, 2], [2, 3], [3, 4], [2, 5], [5, 6], 
+    [4, 7], [7, 8], [8, 9], [9, 10]
 ];
 
-function showVirgo() {
+function showAquarius() {
     narrative.classList.add('hidden');
-    virgoStep.classList.remove('hidden');
+    aquariusStep.classList.remove('hidden');
     
     const svg = document.getElementById('constellation-svg');
     svg.innerHTML = ''; 
 
-    virgoPoints.forEach((point, index) => {
+    aquariusPoints.forEach((point) => {
         const star = document.createElement('div');
-        star.className = 'star virgo-star';
+        star.className = 'aquarius-star';
+        // Insert the star character
+        star.innerHTML = '★'; 
         star.style.left = point.x + '%';
         star.style.top = point.y + '%';
+        // No longer setting width/height here, handled by font-size in CSS
         
-        if(index === 11) { 
-            star.style.width = '8px';
-            star.style.height = '8px';
-            star.style.boxShadow = '0 0 15px #FFBF00';
-        } else {
-            star.style.width = '5px';
-            star.style.height = '5px';
-        }
-        star.style.setProperty('--duration', '2s');
         starContainer.appendChild(star);
     });
 
-    virgoConnections.forEach((pair, index) => {
-        const p1 = virgoPoints[pair[0]];
-        const p2 = virgoPoints[pair[1]];
+    aquariusConnections.forEach((pair, index) => {
+        const p1 = aquariusPoints[pair[0]];
+        const p2 = aquariusPoints[pair[1]];
         
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', p1.x + '%');
@@ -140,61 +114,56 @@ function showVirgo() {
         line.setAttribute('x2', p2.x + '%');
         line.setAttribute('y2', p2.y + '%');
         line.classList.add('constellation-line');
-        line.style.animationDelay = (index * 0.3) + 's';
+        line.style.animationDelay = (index * 0.2) + 's';
         svg.appendChild(line);
     });
 
     setTimeout(() => {
-        virgoLabel.classList.add('label-visible');
-    }, 2500);
-
-    setTimeout(() => {
-        virgoBtnContainer.classList.remove('hidden');
+        document.querySelectorAll('.aquarius-star').forEach(el => el.classList.add('aquarius-star-glow'));
+        document.querySelectorAll('.constellation-line').forEach(el => el.classList.add('constellation-line-glow'));
+        
         setTimeout(() => {
-            virgoBtnContainer.classList.add('label-visible');
-        }, 50);
-    }, 4500);
+             aquariusBtnContainer.classList.remove('hidden');
+             setTimeout(() => { aquariusBtnContainer.classList.add('label-visible'); }, 50);
+        }, 1000);
+
+    }, 6500);
 }
 
-function finishVirgoStep() {
-    virgoStep.classList.add('fade-out');
-    document.querySelectorAll('.virgo-star').forEach(el => el.classList.add('fade-out'));
+function finishAquariusStep() {
+    aquariusStep.classList.add('fade-out');
+    document.querySelectorAll('.aquarius-star').forEach(el => {
+        el.classList.add('fade-out');
+    });
     
     setTimeout(showFinale, 1500);
 }
 
 function showFinale() {
-    virgoStep.classList.add('hidden');
-    document.querySelectorAll('.virgo-star').forEach(el => el.remove());
+    aquariusStep.classList.add('hidden');
+    document.querySelectorAll('.aquarius-star').forEach(el => el.remove());
 
     finale.classList.remove('hidden');
     startFireworks();
-
-    // START LISTENING FOR WISHES FROM FIREBASE
     listenForWishes();
 }
 
-
 // --- CLOUD DATABASE LOGIC ---
-
 function saveMessage() {
     const input = document.getElementById('user-message');
     const val = input.value;
     if(val.trim() === "") return;
 
-    // Push to Firebase Cloud (This saves it online!)
     db.ref('wishes').push({
         text: val,
         timestamp: Date.now()
     }).catch(error => {
         console.error("Error saving message:", error);
-        alert("Could not save message. Check your internet or Firebase rules.");
+        alert("Could not save message. Check connection.");
     });
 
-    // Clear input
     input.value = '';
 
-    // Show Confirmation
     const confirmMsg = document.getElementById('save-confirmation');
     confirmMsg.classList.remove('hidden');
     confirmMsg.classList.add('fade-in');
@@ -202,16 +171,11 @@ function saveMessage() {
     setTimeout(() => {
         confirmMsg.classList.remove('fade-in');
         confirmMsg.classList.add('fade-out');
-        setTimeout(() => {
-             confirmMsg.classList.add('hidden');
-             confirmMsg.classList.remove('fade-out');
-        }, 1000);
+        setTimeout(() => { confirmMsg.classList.add('hidden'); confirmMsg.classList.remove('fade-out'); }, 1000);
     }, 2000);
 }
 
 function listenForWishes() {
-    // This runs whenever ANYONE adds a wish, even on another device
-    // It grabs the last 50 wishes so the screen isn't empty
     db.ref('wishes').limitToLast(50).on('child_added', (snapshot) => {
         const data = snapshot.val();
         if(data && data.text) {
@@ -225,7 +189,6 @@ function renderFloatingWish(text) {
     p.className = 'floating-wish';
     p.textContent = text;
     
-    // Random Positioning
     const randomTop = Math.floor(Math.random() * 80) + 10; 
     const randomLeft = Math.floor(Math.random() * 80) + 10; 
     const randomDuration = Math.floor(Math.random() * 15) + 10; 
@@ -244,68 +207,38 @@ function renderFloatingWish(text) {
 const canvas = document.getElementById('fireworksCanvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
-
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeCanvas); resizeCanvas();
 
 function createParticle(x, y) {
     const particleCount = 30;
     for (let i = 0; i < particleCount; i++) {
         particles.push({
-            x: x,
-            y: y,
-            color: `hsl(${Math.random() * 50 + 20}, 100%, 50%)`, 
+            x: x, y: y,
+            color: `hsl(${Math.random() * 60 + 240}, 100%, 70%)`, 
             radius: Math.random() * 3,
-            speed: {
-                x: (Math.random() - 0.5) * 6,
-                y: (Math.random() - 0.5) * 6
-            },
-            life: 100,
-            opacity: 1
+            speed: { x: (Math.random() - 0.5) * 6, y: (Math.random() - 0.5) * 6 },
+            life: 100, opacity: 1
         });
     }
 }
-
 function updateFireworks() {
     ctx.globalCompositeOperation = 'destination-out';
     ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.globalCompositeOperation = 'source-over';
-
     particles.forEach((p, index) => {
-        p.x += p.speed.x;
-        p.y += p.speed.y;
-        p.life--;
-        p.opacity -= 0.01;
-        
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.opacity;
-        ctx.fill();
-
-        if (p.life <= 0 || p.opacity <= 0) {
-            particles.splice(index, 1);
-        }
+        p.x += p.speed.x; p.y += p.speed.y; p.life--; p.opacity -= 0.01;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color; ctx.globalAlpha = p.opacity; ctx.fill();
+        if (p.life <= 0 || p.opacity <= 0) particles.splice(index, 1);
     });
-
     requestAnimationFrame(updateFireworks);
 }
-
 function startFireworks() {
     updateFireworks();
-    setInterval(() => {
-        createParticle(
-            Math.random() * canvas.width, 
-            Math.random() * canvas.height / 2 
-        );
-    }, 800);
+    setInterval(() => { createParticle(Math.random() * canvas.width, Math.random() * canvas.height / 2); }, 800);
 }
-
 function toggleMusic() {
     const btn = document.getElementById('music-control');
     btn.style.opacity = btn.style.opacity === '1' ? '0.3' : '1';

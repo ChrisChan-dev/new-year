@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@200;400&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -36,12 +35,11 @@
             <h1 id="narrative-text"></h1>
         </div>
 
-        <div id="step-virgo" class="hidden">
+        <div id="step-aquarius" class="hidden">
             <svg id="constellation-svg" xmlns="http://www.w3.org/2000/svg"></svg>
-            <div id="virgo-label">VIRGO</div>
             
-            <div id="virgo-btn-container" class="hidden">
-                <button class="btn-text" onclick="finishVirgoStep()">Make a Wish &rarr;</button>
+            <div id="aquarius-btn-container" class="hidden">
+                <button class="btn-text" onclick="finishAquariusStep()">Make a Wish &rarr;</button>
             </div>
         </div>
 
@@ -55,7 +53,7 @@
             </div>
 
             <div id="message-section" class="fade-in" style="animation-delay: 3s; opacity: 0;">
-                <textarea id="user-message" placeholder="Write a wish anonymously for 2026..."></textarea>
+                <textarea id="user-message" placeholder="Write a wish for 2026..."></textarea>
                 <br>
                 <div class="button-group">
                     <button class="btn-text" onclick="saveMessage()">Send to the Stars</button>

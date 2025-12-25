@@ -13,7 +13,7 @@ body {
     position: relative;
 }
 
-.stars, #step-virgo {
+.stars, #step-aquarius {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
 }
@@ -24,7 +24,7 @@ body {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    z-index: 1; /* Above stars, below fireworks */
+    z-index: 1;
     overflow: hidden;
     pointer-events: none;
 }
@@ -32,8 +32,8 @@ body {
 .floating-wish {
     position: absolute;
     font-family: 'Dancing Script', cursive;
-    color: rgba(255, 191, 0, 0.2); /* Low opacity amber */
-    text-shadow: 0 0 10px rgba(255, 191, 0, 0.1);
+    color: rgba(153, 102, 204, 0.2); 
+    text-shadow: 0 0 10px rgba(153, 102, 204, 0.1);
     white-space: nowrap;
     animation: floatDrift linear infinite;
     user-select: none;
@@ -47,7 +47,7 @@ body {
     100% { transform: translateY(-60px) translateX(40px); opacity: 0; }
 }
 
-#step-virgo { 
+#step-aquarius { 
     z-index: 2; 
     display: flex;
     flex-direction: column;
@@ -57,7 +57,7 @@ body {
     pointer-events: none;
 } 
 
-#virgo-btn-container {
+#aquarius-btn-container {
     pointer-events: auto;
     margin-top: 15px;
     z-index: 10;
@@ -73,6 +73,7 @@ canvas {
     pointer-events: none;
 }
 
+/* Background background stars */
 .star {
     position: absolute;
     background: white;
@@ -81,11 +82,26 @@ canvas {
     animation: twinkle var(--duration) ease-in-out infinite;
 }
 
-.virgo-star {
-    background-color: #FFBF00;
-    box-shadow: 0 0 8px #FFBF00, 0 0 15px rgba(255, 191, 0, 0.5);
+/* UPDATED: Aquarius Constellation Stars (Now actual Star shapes) */
+.aquarius-star {
+    position: absolute;
+    color: #9966CC; /* Amethyst color for the text star */
+    font-size: 1.5rem; /* Adjust size of the star character */
+    line-height: 0;
+    transform: translate(-50%, -50%); /* Center the star on the coordinate */
     opacity: 0.9;
     z-index: 3;
+    transition: text-shadow 3s ease, opacity 1.5s ease;
+    
+    /* Remove old dot styles */
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+/* UPDATED: New class for the glowing effect using text-shadow */
+.aquarius-star-glow {
+    text-shadow: 0 0 15px #9966CC, 0 0 30px #9966CC;
 }
 
 @keyframes twinkle {
@@ -102,7 +118,7 @@ canvas {
     pointer-events: none;
 }
 .constellation-line {
-    stroke: #FFBF00;
+    stroke: #9966CC; /* Amethyst */
     stroke-width: 2px;
     stroke-linecap: round;
     fill: none;
@@ -110,22 +126,15 @@ canvas {
     stroke-dasharray: 2000;
     stroke-dashoffset: 2000;
     animation: drawLine 6s ease-out forwards;
+    transition: filter 3s ease;
+}
+
+.constellation-line-glow {
+    filter: drop-shadow(0 0 5px #9966CC) drop-shadow(0 0 10px #9966CC);
 }
 
 @keyframes drawLine {
     to { stroke-dashoffset: 0; }
-}
-
-#virgo-label {
-    font-family: 'Dancing Script', cursive;
-    font-size: 4rem;
-    color: #FFBF00;
-    text-shadow: 0 0 10px rgba(255, 191, 0, 0.3);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 2s ease, transform 2s ease;
-    z-index: 4;
-    margin-bottom: 10px;
 }
 
 .label-visible {
@@ -190,7 +199,6 @@ p {
     padding-right: 40px;
 }
 
-/* --- MESSAGE STYLES --- */
 #message-section {
     margin-top: 30px;
     width: 100%;
@@ -221,28 +229,11 @@ textarea:focus {
 #save-confirmation {
     margin-top: 10px;
     font-size: 0.9rem;
-    color: #FFBF00;
+    color: #9966CC;
 }
 .button-group {
     display: flex;
     align-items: center;
-}
-.btn-text-small {
-    background: none;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 12px 20px;
-    color: #888;
-    font-size: 0.8rem;
-    cursor: pointer;
-    border-radius: 50px;
-    transition: all 0.3s;
-    pointer-events: auto;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.btn-text-small:hover {
-    color: white;
-    border-color: white;
 }
 
 footer {
@@ -302,12 +293,10 @@ footer {
 @media (max-width: 768px) {
     h1 { font-size: 1.8rem; }
     p { font-size: 0.9rem; }
-    #virgo-label { font-size: 2.8rem; margin-bottom: 5px; }
     .btn-text { padding: 10px 25px; font-size: 0.8rem; }
     .small-subtext { font-size: 0.75rem; }
-    #step-virgo { padding-bottom: 100px; }
+    #step-aquarius { padding-bottom: 100px; }
     #main-container { width: 90%; }
     textarea { width: 90%; }
-    
-    .floating-wish { font-size: 1.2rem; } /* Smaller background text on phone */
+    .floating-wish { font-size: 1.2rem; }
 }

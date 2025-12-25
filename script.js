@@ -42,7 +42,7 @@ const bgWishContainer = document.getElementById('background-wish-container');
 const messages = [
     "2025 wasn’t perfect.",
     "But it had moments worth remembering.",
-    "“And people worth smiling about."
+    "And people worth smiling about."
 ];
 
 function startJourney() {
@@ -123,8 +123,8 @@ function showAquarius() {
         document.querySelectorAll('.constellation-line').forEach(el => el.classList.add('constellation-line-glow'));
         
         setTimeout(() => {
-             aquariusBtnContainer.classList.remove('hidden');
-             setTimeout(() => { aquariusBtnContainer.classList.add('label-visible'); }, 50);
+            aquariusBtnContainer.classList.remove('hidden');
+            setTimeout(() => { aquariusBtnContainer.classList.add('label-visible'); }, 50);
         }, 1000);
 
     }, 6500);

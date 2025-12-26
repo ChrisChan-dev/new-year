@@ -76,7 +76,7 @@
             <div id="confession-step-1">
                 <p class="modal-text">This is a short message for you, Shane.</p>
                 <p class="modal-text">I’m not sure if this is too late or too early to say,<br>but I’ve grown to like you, and I don’t really know why.<br>You don’t have to feel the same.</p>
-                <p class="modal-text">I just wanted to be honest.</p>
+                <p class="modal-text">I just wanted to <span style="color: gold;">be honest.</span></p>
                 
                 <div class="modal-warning">
                     Please think twice before clicking.<br>You can only choose once.
@@ -92,10 +92,9 @@
 
             <div id="confession-step-proceed" class="hidden">
                 <p class="modal-text">Thank you for choosing to proceed.</p>
-                <p class="modal-text">If you’re comfortable,<br>just tell me why you decided to proceed.<br>Leave me a message.</p>
-                
-                <textarea id="confession-message" placeholder="Type your response here..."></textarea>
-                <button class="btn-text" style="margin-top:10px" onclick="saveConfessionMessage()">Send Message</button>
+                <p class="modal-text">I'm glad you feel the same way,<br>or at least gave this a chance.</p>
+
+                <p class="modal-text">Leave me a message.</p>
                 
                 <p class="small-note">This won’t notify me whether you choose proceed or refuse.</p>
                 <br>
@@ -108,6 +107,8 @@
                 <p class="modal-text">I just want to move into 2026 without getting hurt.<br>And if you’re worried about the effort I put into this—don’t be.</p>
                 <p class="modal-text">This is part of what I do, so consider it practice for me.</p>
                 <p class="modal-text">Thank you for reading.</p>
+
+                <p class="small-note">This won’t notify me whether you choose proceed or refuse.</p>
                 <br>
                 <button class="btn-text close-modal" onclick="closeConfession()">Close</button>
             </div>

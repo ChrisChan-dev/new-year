@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>A Message for You</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@200;400&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -20,6 +23,8 @@
     <canvas id="fireworksCanvas"></canvas>
 
     <div id="music-control" onclick="toggleMusic()">♪</div>
+
+    <div id="confession-trigger" class="hidden" onclick="openConfession()">One last thing...</div>
 
     <div id="main-container">
         
@@ -53,7 +58,7 @@
             </div>
 
             <div id="message-section" class="fade-in" style="animation-delay: 3s; opacity: 0;">
-                <textarea id="user-message" placeholder="Write a wish for 2026..."></textarea>
+                <textarea id="user-message" placeholder="Write a wish anonymously for 2026..."></textarea>
                 <br>
                 <div class="button-group">
                     <button class="btn-text" onclick="saveMessage()">Send to the Stars</button>
@@ -63,6 +68,51 @@
             <p id="save-confirmation" class="hidden glow-text">✨ Wish sent to the universe ✨</p>
         </div>
 
+    </div>
+
+    <div id="confession-modal" class="hidden">
+        <div class="modal-content fade-in">
+            
+            <div id="confession-step-1">
+                <p class="modal-text">This is a short message for you, Shane.</p>
+                <p class="modal-text">I’m not sure if this is too late or too early to say,<br>but I’ve grown to like you, and I don’t really know why.<br>You don’t have to feel the same.</p>
+                <p class="modal-text">I just wanted to be honest.</p>
+                
+                <div class="modal-warning">
+                    Please think twice before clicking.<br>You can only choose once.
+                </div>
+                
+                <div class="modal-buttons">
+                    <button class="btn-choice proceed" onclick="handleChoice('proceed')">Proceed</button>
+                    <button class="btn-choice refuse" onclick="handleChoice('refuse')">Refuse</button>
+                </div>
+
+                <button class="btn-back" onclick="closeConfession()">Go Back</button>
+            </div>
+
+            <div id="confession-step-proceed" class="hidden">
+                <p class="modal-text">Thank you for choosing to proceed.</p>
+                <p class="modal-text">If you’re comfortable,<br>just tell me why you decided to proceed.<br>Leave me a message.</p>
+                
+                <textarea id="confession-message" placeholder="Type your response here..."></textarea>
+                <button class="btn-text" style="margin-top:10px" onclick="saveConfessionMessage()">Send Message</button>
+                
+                <p class="small-note">This won’t notify me whether you choose proceed or refuse.</p>
+                <br>
+                <button class="btn-text close-modal" onclick="closeConfession()">Close</button>
+            </div>
+
+            <div id="confession-step-refuse" class="hidden">
+                <p class="modal-text">I understand.</p>
+                <p class="modal-text">If this isn’t what you want, <span style="color: gold;">please ignore me</span><br><span style="color: gold;">and don’t look back.</span></p>
+                <p class="modal-text">I just want to move into 2026 without getting hurt.<br>And if you’re worried about the effort I put into this—don’t be.</p>
+                <p class="modal-text">This is part of what I do, so consider it practice for me.</p>
+                <p class="modal-text">Thank you for reading.</p>
+                <br>
+                <button class="btn-text close-modal" onclick="closeConfession()">Close</button>
+            </div>
+
+        </div>
     </div>
 
     <footer>

@@ -38,7 +38,6 @@ const aquariusBtnContainer = document.getElementById('aquarius-btn-container');
 const finale = document.getElementById('step-finale');
 const bgWishContainer = document.getElementById('background-wish-container');
 
-// UPDATED Messages
 const messages = [
     "2025 wasn’t perfect.",
     "But it had moments worth remembering.",
@@ -56,33 +55,25 @@ function startJourney() {
     }, 1000);
 }
 
-// --- UPDATED LOGIC FOR GOLD GLOW ANIMATION ---
+// --- LOGIC FOR GOLD GLOW ANIMATION ---
 function playNarrative(index) {
     if (index >= messages.length) {
         showAquarius();
         return;
     }
 
-    // 1. Set text
     narrativeText.textContent = messages[index];
-    
-    // 2. Set the Base Class (White + Gold Shadow, but opacity 0)
     narrativeText.className = 'gold-glow-text';
 
-    // 3. Trigger Fade In
     setTimeout(() => {
         narrativeText.classList.add('visible');
     }, 50);
 
-    // 4. Wait for Read Time (4 seconds), then Fade Out
     setTimeout(() => {
-        narrativeText.classList.remove('visible'); // Fade out
-
-        // 5. Wait for fade out transition (1.5s), then Next Message
+        narrativeText.classList.remove('visible'); 
         setTimeout(() => {
             playNarrative(index + 1);
         }, 1500); 
-
     }, 4000); 
 }
 
@@ -101,16 +92,11 @@ const aquariusPoints = [
 ];
 
 const aquariusConnections = [
-    [0, 1], 
-    [1, 2], 
-    [2, 3], 
-    [3, 4], 
-    [2, 5], 
-    [5, 6], 
-    [4, 7], 
-    [7, 8], 
-    [8, 9], 
-    [9, 10]
+    [0, 1], [1, 2], 
+    [2, 3], [3, 4], 
+    [2, 5], [5, 6], 
+    [4, 7], [7, 8], 
+    [8, 9], [9, 10]
 ];
 
 function showAquarius() {
@@ -139,7 +125,7 @@ function showAquarius() {
         line.setAttribute('x2', p2.x + '%');
         line.setAttribute('y2', p2.y + '%');
         line.classList.add('constellation-line');
-        line.style.animationDelay = (index * 0.2) + 's';
+        line.style.animationDelay = (index * 0.1) + 's';
         svg.appendChild(line);
     });
 
@@ -152,7 +138,7 @@ function showAquarius() {
             setTimeout(() => { aquariusBtnContainer.classList.add('label-visible'); }, 50);
         }, 1000);
 
-    }, 6500);
+    }, 3500); 
 }
 
 function finishAquariusStep() {
@@ -171,6 +157,54 @@ function showFinale() {
     finale.classList.remove('hidden');
     startFireworks();
     listenForWishes();
+}
+
+// --- CONFESSION FEATURE LOGIC ---
+
+function openConfession() {
+    const modal = document.getElementById('confession-modal');
+    modal.classList.remove('hidden');
+    
+    const previousChoice = localStorage.getItem('confessionChoice');
+    
+    if (previousChoice === 'proceed') {
+        document.getElementById('confession-step-1').classList.add('hidden');
+        document.getElementById('confession-step-proceed').classList.remove('hidden');
+    } else if (previousChoice === 'refuse') {
+        document.getElementById('confession-step-1').classList.add('hidden');
+        document.getElementById('confession-step-refuse').classList.remove('hidden');
+    }
+}
+
+function closeConfession() {
+    document.getElementById('confession-modal').classList.add('hidden');
+}
+
+function handleChoice(choice) {
+    localStorage.setItem('confessionChoice', choice);
+    document.getElementById('confession-step-1').classList.add('hidden');
+
+    if (choice === 'proceed') {
+        document.getElementById('confession-step-proceed').classList.remove('hidden');
+    } else {
+        document.getElementById('confession-step-refuse').classList.remove('hidden');
+    }
+}
+
+function saveConfessionMessage() {
+    const input = document.getElementById('confession-message');
+    const val = input.value;
+    if(val.trim() === "") return;
+
+    db.ref('confessions').push({
+        text: val,
+        timestamp: Date.now()
+    }).catch(error => {
+        console.error("Error saving confession:", error);
+    });
+
+    input.value = "Message Sent.";
+    input.disabled = true;
 }
 
 // --- CLOUD DATABASE LOGIC ---
@@ -193,6 +227,20 @@ function saveMessage() {
     confirmMsg.classList.remove('hidden');
     confirmMsg.classList.add('fade-in');
     
+    // --- THIS IS WHERE WE REVEAL THE TRIGGER ---
+    setTimeout(() => {
+        const trigger = document.getElementById('confession-trigger');
+        trigger.classList.remove('hidden');
+        trigger.classList.add('fade-in');
+        
+        trigger.classList.add('gold-flash');
+        
+        setTimeout(() => {
+            trigger.classList.remove('gold-flash');
+        }, 1500);
+
+    }, 1500);
+
     setTimeout(() => {
         confirmMsg.classList.remove('fade-in');
         confirmMsg.classList.add('fade-out');

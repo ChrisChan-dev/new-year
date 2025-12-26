@@ -145,6 +145,8 @@ function showFinale() {
 
     finale.classList.remove('hidden');
     startFireworks();
+    
+    // Start listening for incoming wishes (from any device)
     listenForWishes();
 }
 
@@ -173,7 +175,7 @@ function handleChoice(choice) {
     // 1. Save locally
     localStorage.setItem('confessionChoice', choice);
     
-    // 2. SAVE TO FIREBASE (Record their choice)
+    // 2. SAVE TO FIREBASE
     db.ref('decisions').push({
         choice: choice,
         timestamp: Date.now()
@@ -190,7 +192,6 @@ function handleChoice(choice) {
     }
 }
 
-// Added this function back because your HTML includes the text box button
 function saveConfessionMessage() {
     const input = document.getElementById('confession-message');
     const val = input.value;
@@ -208,6 +209,8 @@ function saveConfessionMessage() {
 }
 
 // --- CLOUD DATABASE LOGIC ---
+
+// 1. Sending the message (Local Action)
 function saveMessage() {
     const input = document.getElementById('user-message');
     const val = input.value;
@@ -227,18 +230,6 @@ function saveMessage() {
     confirmMsg.classList.remove('hidden');
     confirmMsg.classList.add('fade-in');
     
-    // SHOW TRIGGER AFTER SENDING
-    setTimeout(() => {
-        const trigger = document.getElementById('confession-trigger');
-        trigger.classList.remove('hidden');
-        trigger.classList.add('fade-in');
-        
-        // Gold Flash
-        trigger.classList.add('gold-flash');
-        setTimeout(() => { trigger.classList.remove('gold-flash'); }, 1500);
-
-    }, 1500);
-
     setTimeout(() => {
         confirmMsg.classList.remove('fade-in');
         confirmMsg.classList.add('fade-out');
@@ -246,13 +237,35 @@ function saveMessage() {
     }, 2000);
 }
 
+// 2. Listening for messages (Global Action - Runs on ALL devices)
 function listenForWishes() {
+    // Whenever a child is added to 'wishes', this runs on EVERY connected device
     db.ref('wishes').limitToLast(50).on('child_added', (snapshot) => {
         const data = snapshot.val();
         if(data && data.text) {
             renderFloatingWish(data.text);
+            
+            // --- TRIGGER THE BUTTON ON ALL DEVICES ---
+            triggerOneLastThing();
         }
     });
+}
+
+// Helper to show the button and flash it
+function triggerOneLastThing() {
+    const trigger = document.getElementById('confession-trigger');
+    
+    // Only animate if we are in the Finale step (to prevent early spoilers if old data loads)
+    const finaleSection = document.getElementById('step-finale');
+    if (finaleSection.classList.contains('hidden')) return;
+
+    trigger.classList.remove('hidden');
+    trigger.classList.add('fade-in');
+    
+    // Reset animation so it flashes every time a new wish comes in
+    trigger.classList.remove('gold-flash');
+    void trigger.offsetWidth; // Trigger reflow to restart animation
+    trigger.classList.add('gold-flash');
 }
 
 function renderFloatingWish(text) {

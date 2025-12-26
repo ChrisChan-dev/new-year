@@ -78,14 +78,25 @@ function playNarrative(index) {
 }
 
 const aquariusPoints = [
-    {x: 85, y: 10}, {x: 65, y: 25}, {x: 45, y: 40}, {x: 30, y: 50}, 
-    {x: 15, y: 60}, {x: 60, y: 50}, {x: 75, y: 55}, {x: 25, y: 75}, 
-    {x: 40, y: 85}, {x: 60, y: 80}, {x: 80, y: 90}
+    {x: 85, y: 10}, 
+    {x: 65, y: 25}, 
+    {x: 45, y: 40},
+    {x: 30, y: 50}, 
+    {x: 15, y: 60}, 
+    {x: 60, y: 50}, 
+    {x: 75, y: 55}, 
+    {x: 25, y: 75}, 
+    {x: 40, y: 85}, 
+    {x: 60, y: 80}, 
+    {x: 80, y: 90}
 ];
 
 const aquariusConnections = [
-    [0, 1], [1, 2], [2, 3], [3, 4], [2, 5], [5, 6], 
-    [4, 7], [7, 8], [8, 9], [9, 10]
+    [0, 1], [1, 2], 
+    [2, 3], [3, 4], 
+    [2, 5], [5, 6], 
+    [4, 7], [7, 8], 
+    [8, 9], [9, 10]
 ];
 
 function showAquarius() {
@@ -149,7 +160,7 @@ function showFinale() {
     // START ALL LISTENERS
     listenForWishes();
     listenForDecisions();
-    listenForReset(); // <--- NEW: Listens for database deletion
+    listenForReset(); 
 }
 
 // --- CONFESSION FEATURE LOGIC ---
@@ -174,10 +185,10 @@ function closeConfession() {
 }
 
 function handleChoice(choice) {
-    // 1. Save locally
+    // 1. Save locally (Locks her browser)
     localStorage.setItem('confessionChoice', choice);
     
-    // 2. SAVE TO FIREBASE
+    // 2. SAVE TO FIREBASE (Updates Your Screen)
     db.ref('decisions').push({
         choice: choice,
         timestamp: Date.now()
@@ -192,22 +203,6 @@ function handleChoice(choice) {
     } else {
         document.getElementById('confession-step-refuse').classList.remove('hidden');
     }
-}
-
-function saveConfessionMessage() {
-    const input = document.getElementById('confession-message');
-    const val = input.value;
-    if(val.trim() === "") return;
-
-    db.ref('confessions').push({
-        text: val,
-        timestamp: Date.now()
-    }).catch(error => {
-        console.error("Error saving confession:", error);
-    });
-
-    input.value = "Message Sent.";
-    input.disabled = true;
 }
 
 // --- CLOUD DATABASE LOGIC ---
@@ -260,7 +255,7 @@ function listenForDecisions() {
             trigger.classList.add('fade-in');
             
             // This shows on YOUR screen what she picked
-            trigger.innerHTML = `She chose: <span style="color: #FFD700; text-transform: uppercase;">${data.choice}</span>`;
+            trigger.innerHTML = `You chose: <span style="color: #FFD700; text-transform: uppercase;">${data.choice}</span>`;
             
             trigger.classList.remove('gold-flash');
             void trigger.offsetWidth; 
@@ -269,19 +264,13 @@ function listenForDecisions() {
     });
 }
 
-// --- LISTENER 3: AUTO-RESET (The Feature You Asked For) ---
+// --- LISTENER 3: AUTO-RESET ---
 function listenForReset() {
-    // Watches the entire 'decisions' folder
     db.ref('decisions').on('value', (snapshot) => {
-        // If snapshot does not exist (meaning you deleted the folder in Firebase)
-        // AND we have a choice stored locally...
+        // If "decisions" folder is deleted in Firebase, this runs:
         if (!snapshot.exists() && localStorage.getItem('confessionChoice')) {
             console.log("Database cleared! Resetting local choice...");
-            
-            // Clear the local memory
             localStorage.removeItem('confessionChoice');
-            
-            // Reload the page automatically so it resets the UI
             location.reload(); 
         }
     });
@@ -293,7 +282,6 @@ function triggerOneLastThing() {
     
     if (finaleSection.classList.contains('hidden')) return;
 
-    // Only show "One last thing" if we haven't seen a choice yet
     if (!trigger.innerHTML.includes("She chose")) {
         trigger.classList.remove('hidden');
         trigger.classList.add('fade-in');

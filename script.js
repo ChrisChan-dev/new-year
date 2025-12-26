@@ -146,8 +146,10 @@ function showFinale() {
     finale.classList.remove('hidden');
     startFireworks();
     
-    // Start listening for incoming wishes (from any device)
+    // START ALL LISTENERS
     listenForWishes();
+    listenForDecisions();
+    listenForReset(); // <--- NEW: Listens for database deletion
 }
 
 // --- CONFESSION FEATURE LOGIC ---
@@ -210,7 +212,6 @@ function saveConfessionMessage() {
 
 // --- CLOUD DATABASE LOGIC ---
 
-// 1. Sending the message (Local Action)
 function saveMessage() {
     const input = document.getElementById('user-message');
     const val = input.value;
@@ -237,35 +238,70 @@ function saveMessage() {
     }, 2000);
 }
 
-// 2. Listening for messages (Global Action - Runs on ALL devices)
+// --- LISTENER 1: WISHES (Triggers Button Reveal) ---
 function listenForWishes() {
-    // Whenever a child is added to 'wishes', this runs on EVERY connected device
     db.ref('wishes').limitToLast(50).on('child_added', (snapshot) => {
         const data = snapshot.val();
         if(data && data.text) {
             renderFloatingWish(data.text);
-            
-            // --- TRIGGER THE BUTTON ON ALL DEVICES ---
             triggerOneLastThing();
         }
     });
 }
 
-// Helper to show the button and flash it
+// --- LISTENER 2: DECISIONS (Shows you her choice) ---
+function listenForDecisions() {
+    db.ref('decisions').limitToLast(1).on('child_added', (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.choice) {
+            const trigger = document.getElementById('confession-trigger');
+            
+            trigger.classList.remove('hidden');
+            trigger.classList.add('fade-in');
+            
+            // This shows on YOUR screen what she picked
+            trigger.innerHTML = `She chose: <span style="color: #FFD700; text-transform: uppercase;">${data.choice}</span>`;
+            
+            trigger.classList.remove('gold-flash');
+            void trigger.offsetWidth; 
+            trigger.classList.add('gold-flash');
+        }
+    });
+}
+
+// --- LISTENER 3: AUTO-RESET (The Feature You Asked For) ---
+function listenForReset() {
+    // Watches the entire 'decisions' folder
+    db.ref('decisions').on('value', (snapshot) => {
+        // If snapshot does not exist (meaning you deleted the folder in Firebase)
+        // AND we have a choice stored locally...
+        if (!snapshot.exists() && localStorage.getItem('confessionChoice')) {
+            console.log("Database cleared! Resetting local choice...");
+            
+            // Clear the local memory
+            localStorage.removeItem('confessionChoice');
+            
+            // Reload the page automatically so it resets the UI
+            location.reload(); 
+        }
+    });
+}
+
 function triggerOneLastThing() {
     const trigger = document.getElementById('confession-trigger');
-    
-    // Only animate if we are in the Finale step (to prevent early spoilers if old data loads)
     const finaleSection = document.getElementById('step-finale');
+    
     if (finaleSection.classList.contains('hidden')) return;
 
-    trigger.classList.remove('hidden');
-    trigger.classList.add('fade-in');
-    
-    // Reset animation so it flashes every time a new wish comes in
-    trigger.classList.remove('gold-flash');
-    void trigger.offsetWidth; // Trigger reflow to restart animation
-    trigger.classList.add('gold-flash');
+    // Only show "One last thing" if we haven't seen a choice yet
+    if (!trigger.innerHTML.includes("She chose")) {
+        trigger.classList.remove('hidden');
+        trigger.classList.add('fade-in');
+        
+        trigger.classList.remove('gold-flash');
+        void trigger.offsetWidth; 
+        trigger.classList.add('gold-flash');
+    }
 }
 
 function renderFloatingWish(text) {

@@ -78,25 +78,14 @@ function playNarrative(index) {
 }
 
 const aquariusPoints = [
-    {x: 85, y: 10}, 
-    {x: 65, y: 25}, 
-    {x: 45, y: 40}, 
-    {x: 30, y: 50}, 
-    {x: 15, y: 60}, 
-    {x: 60, y: 50}, 
-    {x: 75, y: 55}, 
-    {x: 25, y: 75}, 
-    {x: 40, y: 85}, 
-    {x: 60, y: 80}, 
-    {x: 80, y: 90}
+    {x: 85, y: 10}, {x: 65, y: 25}, {x: 45, y: 40}, {x: 30, y: 50}, 
+    {x: 15, y: 60}, {x: 60, y: 50}, {x: 75, y: 55}, {x: 25, y: 75}, 
+    {x: 40, y: 85}, {x: 60, y: 80}, {x: 80, y: 90}
 ];
 
 const aquariusConnections = [
-    [0, 1], [1, 2], 
-    [2, 3], [3, 4], 
-    [2, 5], [5, 6], 
-    [4, 7], [7, 8], 
-    [8, 9], [9, 10]
+    [0, 1], [1, 2], [2, 3], [3, 4], [2, 5], [5, 6], 
+    [4, 7], [7, 8], [8, 9], [9, 10]
 ];
 
 function showAquarius() {
@@ -181,9 +170,19 @@ function closeConfession() {
 }
 
 function handleChoice(choice) {
+    // 1. Save locally
     localStorage.setItem('confessionChoice', choice);
-    document.getElementById('confession-step-1').classList.add('hidden');
+    
+    // 2. SAVE TO FIREBASE (Record their choice)
+    db.ref('decisions').push({
+        choice: choice,
+        timestamp: Date.now()
+    }).catch(error => {
+        console.error("Error saving decision:", error);
+    });
 
+    // 3. Update UI
+    document.getElementById('confession-step-1').classList.add('hidden');
     if (choice === 'proceed') {
         document.getElementById('confession-step-proceed').classList.remove('hidden');
     } else {
@@ -191,6 +190,7 @@ function handleChoice(choice) {
     }
 }
 
+// Added this function back because your HTML includes the text box button
 function saveConfessionMessage() {
     const input = document.getElementById('confession-message');
     const val = input.value;
@@ -227,17 +227,15 @@ function saveMessage() {
     confirmMsg.classList.remove('hidden');
     confirmMsg.classList.add('fade-in');
     
-    // --- THIS IS WHERE WE REVEAL THE TRIGGER ---
+    // SHOW TRIGGER AFTER SENDING
     setTimeout(() => {
         const trigger = document.getElementById('confession-trigger');
         trigger.classList.remove('hidden');
         trigger.classList.add('fade-in');
         
+        // Gold Flash
         trigger.classList.add('gold-flash');
-        
-        setTimeout(() => {
-            trigger.classList.remove('gold-flash');
-        }, 1500);
+        setTimeout(() => { trigger.classList.remove('gold-flash'); }, 1500);
 
     }, 1500);
 

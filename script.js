@@ -149,7 +149,7 @@ function showFinale() {
     // START ALL LISTENERS
     listenForWishes();
     listenForDecisions();
-    listenForReset(); 
+    listenForReset();
 }
 
 // --- CONFESSION FEATURE LOGIC ---
@@ -174,10 +174,10 @@ function closeConfession() {
 }
 
 function handleChoice(choice) {
-    // 1. Save locally (Locks her browser)
+    // 1. Save locally
     localStorage.setItem('confessionChoice', choice);
     
-    // 2. SAVE TO FIREBASE (Updates Your Screen)
+    // 2. SAVE TO FIREBASE
     db.ref('decisions').push({
         choice: choice,
         timestamp: Date.now()
@@ -215,6 +215,9 @@ function saveMessage() {
     confirmMsg.classList.remove('hidden');
     confirmMsg.classList.add('fade-in');
     
+    // NOTE: I removed the local trigger here. 
+    // It now waits for the database listener below to count to 5.
+
     setTimeout(() => {
         confirmMsg.classList.remove('fade-in');
         confirmMsg.classList.add('fade-out');
@@ -222,18 +225,29 @@ function saveMessage() {
     }, 2000);
 }
 
-// --- LISTENER 1: WISHES (Triggers Button Reveal) ---
+// --- LISTENERS ---
+
+// 1. LISTENER FOR WISHES (Counts to 5)
+let wishCount = 0; // Global counter
+
 function listenForWishes() {
     db.ref('wishes').limitToLast(50).on('child_added', (snapshot) => {
         const data = snapshot.val();
         if(data && data.text) {
             renderFloatingWish(data.text);
-            triggerOneLastThing();
+            
+            // Increment the counter
+            wishCount++;
+            
+            // Only trigger if we have reached 5 wishes (or more)
+            if (wishCount >= 5) {
+                triggerOneLastThing();
+            }
         }
     });
 }
 
-// --- LISTENER 2: DECISIONS (Shows you her choice) ---
+// 2. LISTENER FOR DECISIONS (Shows "You chose...")
 function listenForDecisions() {
     db.ref('decisions').limitToLast(1).on('child_added', (snapshot) => {
         const data = snapshot.val();
@@ -243,7 +257,6 @@ function listenForDecisions() {
             trigger.classList.remove('hidden');
             trigger.classList.add('fade-in');
             
-            // This shows on YOUR screen what she picked
             trigger.innerHTML = `You chose: <span style="color: #FFD700; text-transform: uppercase;">${data.choice}</span>`;
             
             trigger.classList.remove('gold-flash');
@@ -253,10 +266,9 @@ function listenForDecisions() {
     });
 }
 
-// --- LISTENER 3: AUTO-RESET ---
+// 3. LISTENER FOR AUTO-RESET
 function listenForReset() {
     db.ref('decisions').on('value', (snapshot) => {
-        // If "decisions" folder is deleted in Firebase, this runs:
         if (!snapshot.exists() && localStorage.getItem('confessionChoice')) {
             console.log("Database cleared! Resetting local choice...");
             localStorage.removeItem('confessionChoice');
@@ -269,12 +281,15 @@ function triggerOneLastThing() {
     const trigger = document.getElementById('confession-trigger');
     const finaleSection = document.getElementById('step-finale');
     
+    // Only show if we are actually at the finale
     if (finaleSection.classList.contains('hidden')) return;
 
-    if (!trigger.innerHTML.includes("She chose")) {
+    // Only show "One last thing" if she hasn't made a choice yet
+    if (!trigger.innerHTML.includes("You chose")) {
         trigger.classList.remove('hidden');
         trigger.classList.add('fade-in');
         
+        // Flash Gold
         trigger.classList.remove('gold-flash');
         void trigger.offsetWidth; 
         trigger.classList.add('gold-flash');

@@ -146,7 +146,6 @@ function showFinale() {
     finale.classList.remove('hidden');
     startFireworks();
     
-    // START ALL LISTENERS
     listenForWishes();
     listenForDecisions();
     listenForReset();
@@ -174,10 +173,8 @@ function closeConfession() {
 }
 
 function handleChoice(choice) {
-    // 1. Save locally
     localStorage.setItem('confessionChoice', choice);
     
-    // 2. SAVE TO FIREBASE
     db.ref('decisions').push({
         choice: choice,
         timestamp: Date.now()
@@ -185,7 +182,6 @@ function handleChoice(choice) {
         console.error("Error saving decision:", error);
     });
 
-    // 3. Update UI
     document.getElementById('confession-step-1').classList.add('hidden');
     if (choice === 'proceed') {
         document.getElementById('confession-step-proceed').classList.remove('hidden');
@@ -215,9 +211,6 @@ function saveMessage() {
     confirmMsg.classList.remove('hidden');
     confirmMsg.classList.add('fade-in');
     
-    // NOTE: I removed the local trigger here. 
-    // It now waits for the database listener below to count to 5.
-
     setTimeout(() => {
         confirmMsg.classList.remove('fade-in');
         confirmMsg.classList.add('fade-out');
@@ -227,8 +220,8 @@ function saveMessage() {
 
 // --- LISTENERS ---
 
-// 1. LISTENER FOR WISHES (Counts to 5)
-let wishCount = 0; // Global counter
+let wishCount = 0; 
+const WISH_TARGET = 3; // <--- Changed from 5 to 3
 
 function listenForWishes() {
     db.ref('wishes').limitToLast(50).on('child_added', (snapshot) => {
@@ -236,18 +229,23 @@ function listenForWishes() {
         if(data && data.text) {
             renderFloatingWish(data.text);
             
-            // Increment the counter
             wishCount++;
             
-            // Only trigger if we have reached 5 wishes (or more)
-            if (wishCount >= 5) {
-                triggerOneLastThing();
+            // Update the counter text
+            const progressText = document.getElementById('unlock-progress');
+            if (progressText) {
+                if (wishCount < WISH_TARGET) {
+                    progressText.innerText = `${wishCount}/${WISH_TARGET} Wishes sent.`;
+                } else {
+                    // Hide the text when target reached
+                    progressText.style.display = 'none';
+                    triggerOneLastThing();
+                }
             }
         }
     });
 }
 
-// 2. LISTENER FOR DECISIONS (Shows "You chose...")
 function listenForDecisions() {
     db.ref('decisions').limitToLast(1).on('child_added', (snapshot) => {
         const data = snapshot.val();
@@ -266,11 +264,9 @@ function listenForDecisions() {
     });
 }
 
-// 3. LISTENER FOR AUTO-RESET
 function listenForReset() {
     db.ref('decisions').on('value', (snapshot) => {
         if (!snapshot.exists() && localStorage.getItem('confessionChoice')) {
-            console.log("Database cleared! Resetting local choice...");
             localStorage.removeItem('confessionChoice');
             location.reload(); 
         }
@@ -281,15 +277,12 @@ function triggerOneLastThing() {
     const trigger = document.getElementById('confession-trigger');
     const finaleSection = document.getElementById('step-finale');
     
-    // Only show if we are actually at the finale
     if (finaleSection.classList.contains('hidden')) return;
 
-    // Only show "One last thing" if she hasn't made a choice yet
     if (!trigger.innerHTML.includes("You chose")) {
         trigger.classList.remove('hidden');
         trigger.classList.add('fade-in');
         
-        // Flash Gold
         trigger.classList.remove('gold-flash');
         void trigger.offsetWidth; 
         trigger.classList.add('gold-flash');
